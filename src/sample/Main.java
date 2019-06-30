@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import Main_Classes.Table;
+
 public class Main extends Application {
 
     @Override
@@ -19,5 +21,9 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
+        /*
+        Table start = new Table();
+        start.Start_Game();
+        */
     }
 }
