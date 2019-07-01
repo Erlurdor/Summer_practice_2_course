@@ -41,6 +41,19 @@ public class Table {
         //распределяю каждую активную роль
         for (int i = 0; i < Num_Active_Role; i++)
         {
+            int Temp;           //временная переменная. Служит для определения номера активной роли
+            Temp = random.nextInt(Num_All_Role);
+
+            switch (Temp)
+            {
+                case 0:
+                {
+                    //Bots[i].setRole();
+                    break;
+                }
+
+            }
+
 
             //Bots[random.nextInt(Num_Of_Players)]
 
