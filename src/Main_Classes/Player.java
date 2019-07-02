@@ -19,8 +19,41 @@ public class Player {
         Role = new Card_Peaceful();
     }
 
-    public void setRole(Card role) {
+    /*
+    public void setRole(int Value)      //установка активной роли. 0 - Мафия, 1 - Доктор, 2 - Коммисар
+    {
+        switch (Value)
+        {
+            case 0:
+            {
+                Role = new Card_Mafia();
+                break;
+            }
+
+            case 1:
+            {
+                Role = new Card_Doctor();
+                break;
+            }
+
+            case 2:
+            {
+                Role = new Card_Policeman();
+                break;
+            }
+        }
+
+    }
+    */
+
+    public void Set_Role(Card role)
+    {
         Role = role;
+    }
+
+    public Card Get_Role()
+    {
+        return Role;
     }
 
     public void setDied(boolean died) {

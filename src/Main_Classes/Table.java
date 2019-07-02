@@ -1,5 +1,6 @@
 package Main_Classes;
 
+import java.io.Console;
 import java.util.Random;
 
 public class Table {
@@ -8,12 +9,82 @@ public class Table {
     private int Role_Mafia;             //количество ролей Мафии
     private int Role_Doctor;            //количество ролей Доктора
     private int Role_Policeman;         //количество ролей Коммисара
-    private int Num_All_Role;           //количество активных ролей всего: 0 - Мафия, 1 - Доктор, 2 - Коммисар
+    //private int Num_All_Role;           //количество активных ролей всего: 0 - Мафия, 1 - Доктор, 2 - Коммисар
+    private int[] Array_Of_Banned_Players;  //массив игроков, которые уже имеют активные роли
+    private int Ptr_Of_AOBP;                //указатель на массив Array_Of_Banned_Players
+    Player[] Bots;                          //массив игроков
+
+    /*
+    public void Display_Arr(int[] Arr, int Role)
+    {
+        for (int i = 0; i < Role; i++)
+        {
+            System.out.print(String.valueOf(Arr[i]) + " ");
+        }
+        System.out.print("\n");
+    }
+*/
+
+    //Arr_Banned_Players - массив игроков, которые уже имеют активную роль, Arr_Ptr - указатель на Arr_Banned_Players, Role - количество ролей,
+    //Value - значение, по которому будет сощдана соотв. карта,  Arr_Players - массив игроков
+    public void Sets_Roles(int Role, int Value, int[] Arr_Roles, int Ptr_AR)
+    {
+        //Sets_Roles(Role_Doctor, 1, Arr_Doctor, Ptr_AD);
+        Random Temp_random = new Random();
+
+        for (int i = 0; i < Role; i++)
+        {
+            //В этом блоке Temp_Value служит временным хранилищем номера персонажа, которому присвоится активная роль
+            int Temp_Value;
+
+            Card card = new Card();
+
+            switch (Value) {
+                case 0: {
+                    card = new Card_Mafia();
+                    break;
+                }
+
+                case 1: {
+                    card = new Card_Doctor();
+                    break;
+                }
+
+                case 2: {
+                    card = new Card_Policeman();
+                    break;
+                }
+            }
+
+
+            boolean Exit = false;           //переменная для того, чтобы сгенерировать нужного игрока
+            do
+            {
+                Exit = false;
+
+                Temp_Value = Temp_random.nextInt(Num_Of_Players);
+
+                for (int j = 0; j < Ptr_Of_AOBP; j++)
+                {
+                    if (Temp_Value == Array_Of_Banned_Players[j])
+                    {
+                        Exit = true;
+                        break;
+                    }
+                }
+            } while (Exit);
+
+            Array_Of_Banned_Players[Ptr_Of_AOBP++] = Temp_Value;
+            Bots[Temp_Value].Set_Role(card);
+            Arr_Roles[Ptr_AR++] = Temp_Value;
+        }
+    }
+
 
     //Начало игры
     public void Start_Game() {
         Num_Of_Players = 10;
-        Num_All_Role = 3;
+        //Num_All_Role = 3;
 
         //определение количества активных ролей
         Num_Active_Role = Num_Of_Players / 2;
@@ -22,7 +93,7 @@ public class Table {
         Role_Policeman = 1;
 
         //создание массива игроков
-        Player[] Bots = new Player[Num_Of_Players];
+        Bots = new Player[Num_Of_Players];
         Random random = new Random();
 
         //первичное заполнение игроков. Заполняются поля: Удача, Имя.
@@ -35,30 +106,91 @@ public class Table {
             Bots[i].Init(Temp_Luck, Temp_Name);
         }
 
-        //вычисляется новое количество активных ролей. Это нужно из-за того, что при распределении может остатся неиспользованная (-ые) активная(-ые) роль(-и)
+        //вычисляется новое количество активных ролей. Это нужно из-за того, что при распределении может остатся неиспользованная(-ые) активная(-ые) роль(-и)
         Num_Active_Role = Role_Mafia + Role_Doctor + Role_Policeman;
 
-        //распределяю каждую активную роль
-        for (int i = 0; i < Num_Active_Role; i++)
+        //переменные, которые показывают. сколько ролей задействованно
+//        int Num_Of_Mafia_Roles = 0;
+//        int Num_Of_Doctor_Roles = 0;
+//        int Num_Of_Policeman_Roles = 0;
+
+        Array_Of_Banned_Players = new int[Num_Of_Players];
+        Ptr_Of_AOBP = 0;
+
+        for (int i = 0; i < Num_Of_Players; i++)
         {
-            int Temp;           //временная переменная. Служит для определения номера активной роли
-            Temp = random.nextInt(Num_All_Role);
-
-            switch (Temp)
-            {
-                case 0:
-                {
-                    //Bots[i].setRole();
-                    break;
-                }
-
-            }
-
-
-            //Bots[random.nextInt(Num_Of_Players)]
-
-
+            Array_Of_Banned_Players[i] = -1;
         }
+
+
+
+        int Temp_Value;             //временная переменная
+        Card_Peaceful Temp_Card_Peaceful = new Card_Peaceful();
+        Player Test_PL = new Player();
+        Test_PL.Init(0, "test");
+
+        //распределяю каждую активную роль
+        /*
+        for (int i = 0; i < Role_Mafia; i++)
+        {
+            //В этом блоке Temp_Value служит временным хранилищем номера персонажа, которому присвоится активная роль
+
+            Card card = new Card_Mafia();
+
+            boolean Exit = false;           //переменная для того, чтобы сгенерировать нужного игрока
+
+            do
+            {
+                Temp_Value = random.nextInt(Num_Of_Players);
+
+                for (int j = 0; j < Ptr_Of_AOBP; j++)
+                {
+                    if (Temp_Value == Array_Of_Banned_Players[j])
+                    {
+                        Exit = true;
+                        break;
+                    }
+                }
+            } while (Exit);
+
+            Array_Of_Banned_Players[Ptr_Of_AOBP++] = Temp_Value;
+            Bots[Temp_Value].Set_Role(card);
+        }*/
+
+        int[] Arr_Mafia = new int[Role_Mafia];
+        int Ptr_AM = 0;
+
+        int[] Arr_Doctor = new int[Role_Doctor];
+        int Ptr_AD = 0;
+
+        int[] Arr_Policeman = new int[Role_Policeman];
+        int Ptr_AP = 0;
+
+
+        Sets_Roles(Role_Mafia, 0, Arr_Mafia, Ptr_AM);
+        //Display_Arr(Arr_Mafia, Role_Mafia);
+
+        Sets_Roles(Role_Doctor, 1, Arr_Doctor, Ptr_AD);
+        //Display_Arr(Arr_Doctor, Role_Doctor);
+
+        Sets_Roles(Role_Policeman, 2, Arr_Policeman, Ptr_AP);
+        //Display_Arr(Arr_Policeman, Role_Policeman);
+
+       // System.out.println("\n");
+
+        
+
+/*
+       for (int i = 0; i < Num_Of_Players; i++)
+       {
+           System.out.println(String.valueOf(Bots[i].Get_Role()));
+       }
+*/
+//        for (int i = 0; i < Num_Active_Role; i++)
+//        {
+//            int Role_Number;           //временная переменная. Служит для определения номера активной роли
+//            Role_Number = random.nextInt(Num_All_Role);
+
 
 
 
