@@ -129,7 +129,7 @@ public class Table {
         Player Test_PL = new Player();
         Test_PL.Init(0, "test");
 
-        //распределяю каждую активную роль
+
         /*
         for (int i = 0; i < Role_Mafia; i++)
         {
@@ -157,6 +157,7 @@ public class Table {
             Bots[Temp_Value].Set_Role(card);
         }*/
 
+        //Эти массивы содержат номера игроков с активной ролью
         int[] Arr_Mafia = new int[Role_Mafia];
         int Ptr_AM = 0;
 
@@ -166,7 +167,7 @@ public class Table {
         int[] Arr_Policeman = new int[Role_Policeman];
         int Ptr_AP = 0;
 
-
+        //распределяю каждую активную роль
         Sets_Roles(Role_Mafia, 0, Arr_Mafia, Ptr_AM);
         //Display_Arr(Arr_Mafia, Role_Mafia);
 
@@ -178,7 +179,45 @@ public class Table {
 
        // System.out.println("\n");
 
-        
+
+
+        //Основной цикл
+        boolean Game_End = false;           //наступил ли конец игры
+        int Num_Of_Days;
+
+
+        Num_Of_Days = 0;            //колчество дней. Отсчет начинается с 1
+
+        while (!Game_End)           //пока игра не закончена
+        {
+            Num_Of_Days++;
+
+            //System.out.println(Bots[0].Get_Role());
+            //int Target;
+
+            //Ночь
+            //ходят только активные роли
+
+            int[] Array_For_Target_Of_Mafia = new int[Ptr_AM];
+            int Ptr_AFTOM = 0;
+
+            for (int j = 0; j < Ptr_AM; j++)
+            {
+                Array_For_Target_Of_Mafia[Ptr_AFTOM++] = Bots[Arr_Mafia[j]].Walk_At_Night(Num_Of_Players, Array_Of_Banned_Players, Role_Mafia);
+
+
+
+            }
+
+            //Target = Bots[0].Walk_At_Night(Num_Of_Players, Array_Of_Banned_Players, Num_Active_Role);
+            //System.out.println(Target);
+
+
+
+            Game_End = true;
+        }
+
+
 
 /*
        for (int i = 0; i < Num_Of_Players; i++)

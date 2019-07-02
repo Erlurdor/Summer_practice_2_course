@@ -5,6 +5,8 @@ package Main_Classes;
 
 //  Основной класс игрока. Содержит характеристики.
 
+import java.util.Random;
+
 public class Player {
     private int Luck;       //показатель удачи игрока
     private String Name;         //имя игрока
@@ -51,12 +53,28 @@ public class Player {
         Role = role;
     }
 
-    public Card Get_Role()
+    public String Get_Role()
     {
-        return Role;
+        return Role.getRole();
     }
 
     public void setDied(boolean died) {
         Died = died;
+    }
+
+    public boolean Get_Diead()
+    {
+        return Died;
+    }
+
+    public int Walk_At_Day(int All_Players)
+    {
+        return Role.Walk_At_Day(All_Players);
+    }
+
+    public int Walk_At_Night(int All_Players, int[] Arr, int Ptr_Arr)
+    {
+        return Role.Walk_At_Night(All_Players, Luck, Arr, Ptr_Arr);
+
     }
 }
