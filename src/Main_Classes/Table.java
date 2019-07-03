@@ -192,7 +192,7 @@ public class Table {
         while (!Game_End)           //пока игра не закончена
         {
             //Ночь. ходят только активные роли
-
+            int Target_For_Doctor;              //цель, которую нужно будет лечить доктору
 
             //Ходит Мафия
 
@@ -213,7 +213,29 @@ public class Table {
             int Target1 = random.nextInt(Ptr_AFTOM);
             int Target2 = random.nextInt(Ptr_AFTOM);
 
-            //if (Bots[Array_For_Target_Of_Mafia[Target1]].Ge)
+            //если у мервой цели ниже показатель удачи, чем у второй
+            if (Bots[Array_For_Target_Of_Mafia[Target1]].Get_Luck() < Bots[Array_For_Target_Of_Mafia[Target2]].Get_Luck())
+            {
+                Bots[Array_For_Target_Of_Mafia[Target1]].Set_Died(true);
+                Target_For_Doctor = Array_For_Target_Of_Mafia[Target1];
+            }
+            else
+            {
+                //если у второй цели показатель атудачи ниже, чем у первой
+                if (Bots[Array_For_Target_Of_Mafia[Target1]].Get_Luck() > Bots[Array_For_Target_Of_Mafia[Target2]].Get_Luck())
+                {
+                    Bots[Array_For_Target_Of_Mafia[Target2]].Set_Died(true);
+                    Target_For_Doctor = Array_For_Target_Of_Mafia[Target2];
+                }
+                else
+                {
+                    //у обоих персонажей показатель удачи раный. Умирает случайно один из них
+                    Target1 = random.nextInt(2);
+                    Bots[Array_For_Target_Of_Mafia[Target1]].Set_Died(true);
+                    Target_For_Doctor = Array_For_Target_Of_Mafia[Target1];
+                }
+            }
+
 
 
 
