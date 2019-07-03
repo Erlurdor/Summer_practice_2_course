@@ -201,14 +201,14 @@ public class Table {
 
 
         //Основной цикл
-        boolean Game_End = false;           //наступил ли конец игры
+        boolean Game_Over = false;           //наступил ли конец игры
         int Num_Of_Days;                    //количество дней. Отсчет начинается с 1
         int Num_Of_Avile_Players;           //количество игроков, которые остались живы
 
         Num_Of_Days = 0;
         Num_Of_Avile_Players = Num_Of_Players;
 
-        while (!Game_End)           //пока игра не закончена
+        while (!Game_Over)           //пока игра не закончена
         {
             Num_Of_Days++;
 
@@ -302,10 +302,17 @@ public class Table {
 
             //System.out.println(Target);
 
+            if (Ptr_AM == 0)
+            {
+                System.out.println("Победа Мирных жителей!");
+                Game_Over = true;
+            }
 
-
-            if (Num_Of_Days == 1)
-                Game_End = true;
+            if (Num_Of_Avile_Players == Ptr_AM)
+            {
+                System.out.println("Победа Мафии!");
+                Game_Over = true;
+            }
         }
 
 
