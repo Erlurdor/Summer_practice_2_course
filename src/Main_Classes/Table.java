@@ -26,8 +26,8 @@ public class Table {
 */
 
     //Arr_Banned_Players - массив игроков, которые уже имеют активную роль, Arr_Ptr - указатель на Arr_Banned_Players, Role - количество ролей,
-    //Value - значение, по которому будет сощдана соотв. карта,  Arr_Players - массив игроков
-    public void Sets_Roles(int Role, int Value, int[] Arr_Roles, int Ptr_AR)
+    //Value - значение, по которому будет создана соотв. карта,  Arr_Players - массив игроков
+    public int Sets_Roles(int Role, int Value, int[] Arr_Roles, int Ptr_AR)
     {
         //Sets_Roles(Role_Doctor, 1, Arr_Doctor, Ptr_AD);
         Random Temp_random = new Random();
@@ -78,6 +78,7 @@ public class Table {
             Bots[Temp_Value].Set_Role(card);
             Arr_Roles[Ptr_AR++] = Temp_Value;
         }
+        return Ptr_AR;
     }
 
 
@@ -125,9 +126,9 @@ public class Table {
 
 
         int Temp_Value;             //временная переменная
-        Card_Peaceful Temp_Card_Peaceful = new Card_Peaceful();
-        Player Test_PL = new Player();
-        Test_PL.Init(0, "test");
+//        Card_Peaceful Temp_Card_Peaceful = new Card_Peaceful();
+//        Player Test_PL = new Player();
+//        Test_PL.Init(0, "test");
 
 
         /*
@@ -168,13 +169,13 @@ public class Table {
         int Ptr_AP = 0;
 
         //распределяю каждую активную роль
-        Sets_Roles(Role_Mafia, 0, Arr_Mafia, Ptr_AM);
+        Ptr_AM = Sets_Roles(Role_Mafia, 0, Arr_Mafia, Ptr_AM);
         //Display_Arr(Arr_Mafia, Role_Mafia);
 
-        Sets_Roles(Role_Doctor, 1, Arr_Doctor, Ptr_AD);
+        Ptr_AD = Sets_Roles(Role_Doctor, 1, Arr_Doctor, Ptr_AD);
         //Display_Arr(Arr_Doctor, Role_Doctor);
 
-        Sets_Roles(Role_Policeman, 2, Arr_Policeman, Ptr_AP);
+        Ptr_AP = Sets_Roles(Role_Policeman, 2, Arr_Policeman, Ptr_AP);
         //Display_Arr(Arr_Policeman, Role_Policeman);
 
        // System.out.println("\n");
@@ -190,29 +191,37 @@ public class Table {
 
         while (!Game_End)           //пока игра не закончена
         {
-            Num_Of_Days++;
+            //Ночь. ходят только активные роли
 
-            //System.out.println(Bots[0].Get_Role());
-            //int Target;
 
-            //Ночь
-            //ходят только активные роли
+            //Ходит Мафия
 
+            //Выбор списка возможных кандидатов отправиться на тот свет
             int[] Array_For_Target_Of_Mafia = new int[Ptr_AM];
             int Ptr_AFTOM = 0;
 
             for (int j = 0; j < Ptr_AM; j++)
             {
-                Array_For_Target_Of_Mafia[Ptr_AFTOM++] = Bots[Arr_Mafia[j]].Walk_At_Night(Num_Of_Players, Array_Of_Banned_Players, Role_Mafia);
+                Array_For_Target_Of_Mafia[Ptr_AFTOM++] = Bots[Arr_Mafia[j]].Walk_At_Night(Bots, Num_Of_Players, Arr_Mafia[j]);
 
-
+                //Player[] Bots, int Num_Of_Players, int[] Target
+                //где Player[]] Bots - массив все игроков, Target - цель ()
 
             }
+
+            //совершение выстрела. Финальный выбор цели
+            int Target1 = random.nextInt(Ptr_AFTOM);
+            int Target2 = random.nextInt(Ptr_AFTOM);
+
+            //if (Bots[Array_For_Target_Of_Mafia[Target1]].Ge)
+
+
 
             //Target = Bots[0].Walk_At_Night(Num_Of_Players, Array_Of_Banned_Players, Num_Active_Role);
             //System.out.println(Target);
 
 
+            Num_Of_Days++;
 
             Game_End = true;
         }

@@ -6,7 +6,7 @@ public class Card {
         return -1;
     }
 
-    public int Walk_At_Night(int All_Players, int Luck, int[] Arr, int Ptr_Arr)
+    public int Walk_At_Night(Player[] Bots, int Num_Of_Players, int Target)
     {
         return -1;
     }

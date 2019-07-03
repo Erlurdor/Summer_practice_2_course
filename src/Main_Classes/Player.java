@@ -58,7 +58,7 @@ public class Player {
         return Role.getRole();
     }
 
-    public void setDied(boolean died) {
+    public void Set_Died(boolean died) {
         Died = died;
     }
 
@@ -72,9 +72,17 @@ public class Player {
         return Role.Walk_At_Day(All_Players);
     }
 
-    public int Walk_At_Night(int All_Players, int[] Arr, int Ptr_Arr)
+    public int Walk_At_Night(Player[] Bots, int Num_Of_Players, int Target)
     {
-        return Role.Walk_At_Night(All_Players, Luck, Arr, Ptr_Arr);
+        return Role.Walk_At_Night(Bots, Num_Of_Players, Target);
 
+    }
+
+    public String Get_Name() {
+        return Name;
+    }
+
+    public int Get_Luck() {
+        return Luck;
     }
 }
