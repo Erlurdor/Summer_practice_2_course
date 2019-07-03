@@ -251,11 +251,15 @@ public class Table {
                 else
                 {
                     //у обоих персонажей показатель удачи раный. Умирает случайно один из них
-                    Target1 = random.nextInt(2);
+
+                    //если осталось больше 1 Мафии
+                   Target1 = random.nextInt(Array_For_Target_Of_Mafia.length);
+
                     Bots[Array_For_Target_Of_Mafia[Target1]].Set_Died(true);
                     Target_For_Doctor = Array_For_Target_Of_Mafia[Target1];
                 }
             }
+            Num_Of_Avile_Players--;
             //System.out.print(Num_Of_Avile_Players - 1 + "   ");
 
 
@@ -267,13 +271,15 @@ public class Table {
                 Save = Bots[Arr_Doctor[i]].Walk_At_Night(Bots, Arr_Doctor[i], Target_For_Doctor);
                 if (Save == 0)
                 {
-                    Num_Of_Avile_Players--;
-
                     if (Bots[Target_For_Doctor].Get_Role() == "Doctor")
                         Ptr_AD = Refresh_Array_Witch_Role(Arr_Doctor, Ptr_AD);
 
                     if (Bots[Target_For_Doctor].Get_Role() == "Policeman")
                         Ptr_AP = Refresh_Array_Witch_Role(Arr_Policeman, Ptr_AP);
+                }
+                else
+                {
+                    Num_Of_Avile_Players++;
                 }
             }
             //System.out.print(Num_Of_Avile_Players + "   ");
@@ -296,23 +302,92 @@ public class Table {
 
 
             //День. Ходят все живые
+            int[] Arr_For_Daily_Votes = new int[Num_Of_Players];          //массив для тех, кого хотят посадить
+            //int Ptr_AFDV = 0;
+
+            //заполенние массива
+            for (int i = 0; i < Num_Of_Players; i++)
+            {
+                int Temp_Vote = Bots[i].Walk_At_Day(Bots, i);
+                if (Temp_Vote != -1)
+                    Arr_For_Daily_Votes[Temp_Vote] += 1;
+                //Ptr_AFDV++;
+            }
+
+            //нахождения наибольшего количества голосов против игрока
+            int Max_Votes = 0;              //максимальное количество голосов
+
+            for (int i = 0; i < Num_Of_Players; i++)
+            {
+                if (Arr_For_Daily_Votes[i] > Max_Votes)
+                    Max_Votes = Arr_For_Daily_Votes[i];
+            }
+
+            //вынесение в массисв все игроков, против которых больше всего голосовали
+            int[] Arr_Max_Votes = new int[Num_Of_Players];
+            int Ptr_AMV = 0;
+
+            for (int i = 0; i < Num_Of_Players; i++)
+            {
+                if (Arr_For_Daily_Votes[i] == Max_Votes)
+                    Arr_Max_Votes[Ptr_AMV++] = i;
+            }
+
+            //нахожу самую минимальную удачу среди них
+            int Min_Luck = 100;
+
+            for (int i = 0; i < Ptr_AMV; i++)
+            {
+                if (Bots[Arr_Max_Votes[i]].Get_Luck() < Min_Luck)
+                    Min_Luck = Bots[Arr_Max_Votes[i]].Get_Luck();
+            }
+
+            //прохожу по массиву и ищу игрока с самым минимальным показателем удачи и убиваю его
+            for (int i = 0; i < Ptr_AMV; i++)
+            {
+                if (Bots[Arr_Max_Votes[i]].Get_Luck() == Min_Luck)
+                {
+                    Bots[Arr_Max_Votes[i]].Set_Died(true);
+
+                    if (Bots[Arr_Max_Votes[i]].Get_Role() == "Mafia")
+                        Ptr_AM = Refresh_Array_Witch_Role(Arr_Mafia, Ptr_AM);
+
+                    if (Bots[Arr_Max_Votes[i]].Get_Role() == "Doctor")
+                        Ptr_AD = Refresh_Array_Witch_Role(Arr_Doctor, Ptr_AD);
+
+                    if (Bots[Arr_Max_Votes[i]].Get_Role() == "Policeman")
+                        Ptr_AP = Refresh_Array_Witch_Role(Arr_Policeman, Ptr_AP);
+
+                    Num_Of_Avile_Players--;
+                    break;
+                }
+            }
 
 
+            //Конец игры
 
-
-            //System.out.println(Target);
-
+            //Мафии больше не осталось
             if (Ptr_AM == 0)
             {
                 System.out.println("Победа Мирных жителей!");
                 Game_Over = true;
             }
 
+            //Количество Мафии равно количеству оставшихся в живых игроков
             if (Num_Of_Avile_Players == Ptr_AM)
             {
                 System.out.println("Победа Мафии!");
                 Game_Over = true;
             }
+
+
+            /*
+            if (Num_Of_Days == 10)
+            {
+                Game_Over = true;
+            }
+            */
+
         }
 
 

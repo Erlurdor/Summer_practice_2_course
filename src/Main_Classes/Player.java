@@ -67,9 +67,9 @@ public class Player {
         return Died;
     }
 
-    public int Walk_At_Day(int All_Players)
+    public int Walk_At_Day(Player[] Bots, int Target)
     {
-        return Role.Walk_At_Day(All_Players);
+        return Role.Walk_At_Day(Bots, Target);
     }
 
     public int Walk_At_Night(Player[] Bots, int Num_Of_Players, int Target)

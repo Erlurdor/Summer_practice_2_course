@@ -4,11 +4,6 @@ import java.util.Random;
 
 public class Card_Doctor extends Card {
     @Override
-    public int Walk_At_Day(int All_Players) {
-        return 2;
-    }
-
-    @Override
     public int Walk_At_Night(Player[] Bots, int Num_Of_Players, int Target)
     {
         //Target - цель, в которую стрелялиа Мафия

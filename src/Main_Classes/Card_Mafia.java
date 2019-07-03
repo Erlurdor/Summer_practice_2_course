@@ -8,16 +8,6 @@ import java.util.Random;
 
 public class Card_Mafia extends  Card {
     @Override
-    public int Walk_At_Day(int All_Players) {
-        Random random = new Random();
-
-
-
-        return 1;
-        //super.Walk_At_Day();
-    }
-
-    @Override
     public int Walk_At_Night(Player[] Bots, int Num_Of_Players, int Target)
     {
         //Target - идекс текущего игрока (Мафии)
