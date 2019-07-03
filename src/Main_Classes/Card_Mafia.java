@@ -20,18 +20,20 @@ public class Card_Mafia extends  Card {
     @Override
     public int Walk_At_Night(Player[] Bots, int Num_Of_Players, int Target)
     {
-        //for (int i = 0; )
+        //Target - идекс текущего игрока (Мафии)
         double Coef = 0.85;             //коэффициент для временной удачи
         int Temp_Luck;                  //временный показатель удачи. Основан на базовой удачи, умноженной на коэфф. K (K < 1)
-        Player[] Alive_Players = new Player[Num_Of_Players];
-        int Ptr_AP = 0;
+        int Num_Alive_Players = 0;      //колчество живых игроков
+        //Player[] Alive_Players = new Player[Num_Of_Players];
+
 
         //вычисляю всех живых игроков
         for (int i = 0; i < Num_Of_Players; i++)
         {
             if (Bots[i].Get_Diead() == false)
             {
-                Alive_Players[Ptr_AP++] = Bots[i];
+               // Alive_Players[Ptr_AP++] = Bots[i];
+                Num_Alive_Players++;
             }
         }
 
@@ -43,7 +45,7 @@ public class Card_Mafia extends  Card {
         int Temp_Random_For_Luck = random.nextInt(99) + 1;       //1 - 100
 
 
-        int Temp_Random_For_Target = random.nextInt(Ptr_AP);
+        int Temp_Random_For_Target = random.nextInt(Num_Alive_Players);
 
         //если удача улыбнулась игроку
         if (Temp_Random_For_Luck <= Temp_Luck)
@@ -55,22 +57,17 @@ public class Card_Mafia extends  Card {
                 Exit = false;
 
                 //если Мафия указала НЕ на саму себя, цель - НЕ мирный житель и НЕ другая Мафия
-                if (Temp_Random_For_Target != Target && Bots[Temp_Random_For_Target].Get_Role() != "Peaceful" && Bots[Temp_Random_For_Target].Get_Role() != "Mafia")
+                if (Temp_Random_For_Target != Target&& Bots[Temp_Random_For_Target].Get_Role() != "Peaceful" && Bots[Temp_Random_For_Target].Get_Role() != "Mafia")
                 {
                     Exit = true;
                     break;
                 }
                 else
                 {
-                    Temp_Random_For_Target = random.nextInt(Ptr_AP);
+                    Temp_Random_For_Target = random.nextInt(Num_Alive_Players);
                 }
 
             } while (!Exit);
-
-
-            //работа с целью
-
-
         }
         else
         {
@@ -90,37 +87,13 @@ public class Card_Mafia extends  Card {
                 }
                 else
                 {
-                    Temp_Random_For_Target = random.nextInt(Ptr_AP);
+                    Temp_Random_For_Target = random.nextInt(Num_Alive_Players);
                 }
 
             } while (!Exit);
-
-
-            //работа с целью
-
-
         }
 
         return Temp_Random_For_Target;
-
-
-
-
-
-
-        //проверяю, сколько элементов в массиве
-
-        //для мафии необходимы: Список всех игроков (All_Players), Удача Мафии (Luck) и массив целей (Arr) в случае, если удача высокая. Ptr - Количество Мафий
-        //int Target;
-
-
-
-
-        //if (Temp_Random <= Temp_Luck)
-
-
-
-
     }
 
     @Override

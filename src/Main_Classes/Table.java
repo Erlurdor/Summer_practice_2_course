@@ -90,7 +90,8 @@ public class Table {
             if (Bots[Arr[i]].Get_Diead() == true)
             {
                 //меняю местами убитого и живого, стоящего на последнем месте. Уменьшаю указатель
-                Bots[Arr[i]] = Bots[Arr[Ptr - 1]];
+                Arr[i] = Arr[Ptr - 1];
+                Arr[Ptr - 1] = 0;
                 Ptr--;
                 break;
             }
@@ -199,7 +200,6 @@ public class Table {
        // System.out.println("\n");
 
 
-
         //Основной цикл
         boolean Game_End = false;           //наступил ли конец игры
         int Num_Of_Days;                    //количество дней. Отсчет начинается с 1
@@ -256,13 +256,15 @@ public class Table {
                     Target_For_Doctor = Array_For_Target_Of_Mafia[Target1];
                 }
             }
+            //System.out.print(Num_Of_Avile_Players - 1 + "   ");
 
 
             //Ход Доктора
             int Save;               //переменная, которую возвращает Доктор. Показывает, спас ли Доктор игрока, в которого выстрелила Мафия (0 - НЕ спас, 1 - спас).
+
             for (int i = 0; i < Ptr_AD; i++)
             {
-                Save = Bots[Arr_Doctor[i]].Walk_At_Night(Bots, Num_Of_Players, Target_For_Doctor);
+                Save = Bots[Arr_Doctor[i]].Walk_At_Night(Bots, Arr_Doctor[i], Target_For_Doctor);
                 if (Save == 0)
                 {
                     Num_Of_Avile_Players--;
@@ -274,6 +276,9 @@ public class Table {
                         Ptr_AP = Refresh_Array_Witch_Role(Arr_Policeman, Ptr_AP);
                 }
             }
+            //System.out.print(Num_Of_Avile_Players + "   ");
+            //System.out.println(Num_Of_Avile_Players);
+
 
             //Ход Коммисара
             int Arrest;         //переменная, которая показывает, задержал ли Коммисар мафию ночью (0 - НЕ задержал, 1 - задержал)
@@ -287,6 +292,7 @@ public class Table {
                     Ptr_AM = Refresh_Array_Witch_Role(Arr_Mafia, Ptr_AM);
                 }
             }
+            //System.out.println(Num_Of_Avile_Players);
 
 
             //День. Ходят все живые
@@ -298,8 +304,8 @@ public class Table {
 
 
 
-
-            Game_End = true;
+            if (Num_Of_Days == 1)
+                Game_End = true;
         }
 
 
