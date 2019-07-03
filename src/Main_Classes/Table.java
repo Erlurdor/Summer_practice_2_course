@@ -82,6 +82,24 @@ public class Table {
     }
 
 
+    private int Refresh_Array_Witch_Role(int[] Arr, int Ptr) {
+        //прохожу по всем элементам массива
+        for (int i = 0; i < Ptr; i++)
+        {
+            //если персонажа убили
+            if (Bots[Arr[i]].Get_Diead() == true)
+            {
+                //меняю местами убитого и живого, стоящего на последнем месте. Уменьшаю указатель
+                Bots[Arr[i]] = Bots[Arr[Ptr - 1]];
+                Ptr--;
+                break;
+            }
+        }
+
+        return Ptr;
+    }
+
+
     //Начало игры
     public void Start_Game() {
         Num_Of_Players = 10;
@@ -184,17 +202,20 @@ public class Table {
 
         //Основной цикл
         boolean Game_End = false;           //наступил ли конец игры
-        int Num_Of_Days;
+        int Num_Of_Days;                    //количество дней. Отсчет начинается с 1
+        int Num_Of_Avile_Players;           //количество игроков, которые остались живы
 
-
-        Num_Of_Days = 0;            //колчество дней. Отсчет начинается с 1
+        Num_Of_Days = 0;
+        Num_Of_Avile_Players = Num_Of_Players;
 
         while (!Game_End)           //пока игра не закончена
         {
-            //Ночь. ходят только активные роли
+            Num_Of_Days++;
+
+            //Ночь. Ходят только активные роли
             int Target_For_Doctor;              //цель, которую нужно будет лечить доктору
 
-            //Ходит Мафия
+            //Ход Мафии
 
             //Выбор списка возможных кандидатов отправиться на тот свет
             int[] Array_For_Target_Of_Mafia = new int[Ptr_AM];
@@ -213,7 +234,7 @@ public class Table {
             int Target1 = random.nextInt(Ptr_AFTOM);
             int Target2 = random.nextInt(Ptr_AFTOM);
 
-            //если у мервой цели ниже показатель удачи, чем у второй
+            //если у первой цели ниже показатель удачи, чем у второй
             if (Bots[Array_For_Target_Of_Mafia[Target1]].Get_Luck() < Bots[Array_For_Target_Of_Mafia[Target2]].Get_Luck())
             {
                 Bots[Array_For_Target_Of_Mafia[Target1]].Set_Died(true);
@@ -221,7 +242,7 @@ public class Table {
             }
             else
             {
-                //если у второй цели показатель атудачи ниже, чем у первой
+                //если у второй цели показатель удачи ниже, чем у первой
                 if (Bots[Array_For_Target_Of_Mafia[Target1]].Get_Luck() > Bots[Array_For_Target_Of_Mafia[Target2]].Get_Luck())
                 {
                     Bots[Array_For_Target_Of_Mafia[Target2]].Set_Died(true);
@@ -237,13 +258,46 @@ public class Table {
             }
 
 
+            //Ход Доктора
+            int Save;               //переменная, которую возвращает Доктор. Показывает, спас ли Доктор игрока, в которого выстрелила Мафия (0 - НЕ спас, 1 - спас).
+            for (int i = 0; i < Ptr_AD; i++)
+            {
+                Save = Bots[Arr_Doctor[i]].Walk_At_Night(Bots, Num_Of_Players, Target_For_Doctor);
+                if (Save == 0)
+                {
+                    Num_Of_Avile_Players--;
+
+                    if (Bots[Target_For_Doctor].Get_Role() == "Doctor")
+                        Ptr_AD = Refresh_Array_Witch_Role(Arr_Doctor, Ptr_AD);
+
+                    if (Bots[Target_For_Doctor].Get_Role() == "Policeman")
+                        Ptr_AP = Refresh_Array_Witch_Role(Arr_Policeman, Ptr_AP);
+                }
+            }
+
+            //Ход Коммисара
+            int Arrest;         //переменная, которая показывает, задержал ли Коммисар мафию ночью (0 - НЕ задержал, 1 - задержал)
+            for (int i = 0; i < Ptr_AP; i++)
+            {
+                Arrest = Bots[Arr_Policeman[i]].Walk_At_Night(Bots, Num_Of_Players, Arr_Policeman[i]);
+
+                if (Arrest == 1)
+                {
+                    Num_Of_Avile_Players--;
+                    Ptr_AM = Refresh_Array_Witch_Role(Arr_Mafia, Ptr_AM);
+                }
+            }
 
 
-            //Target = Bots[0].Walk_At_Night(Num_Of_Players, Array_Of_Banned_Players, Num_Active_Role);
+            //День. Ходят все живые
+
+
+
+
             //System.out.println(Target);
 
 
-            Num_Of_Days++;
+
 
             Game_End = true;
         }
@@ -266,4 +320,6 @@ public class Table {
 
 
     }
+
+
 }
