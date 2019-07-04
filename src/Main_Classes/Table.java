@@ -3,6 +3,7 @@ package Main_Classes;
 import sample.Controller;
 
 import java.io.Console;
+import java.lang.management.PlatformLoggingMXBean;
 import java.util.Random;
 
 public class Table {
@@ -45,7 +46,16 @@ public class Table {
     private String Event_Doctor;             //что произошло после хода Доктора
     private String Event_Policeman;             //что произошло после хода Комиссара
     private String Event_Votes;             //что произошло после Дневного голосования
+    private String Victory;                 //победитель
+    private String Cur_Time;                    //время суток
 
+    /*
+    private Player Target_Mafia;                //цель Мафии
+    private Player Target_Doctor;
+    private Player Target_Policeman;
+*/
+    Player[] Died;
+    int Ptr_Died;
     //Arr_Banned_Players - массив игроков, которые уже имеют активную роль, Arr_Ptr - указатель на Arr_Banned_Players, Role - количество ролей,
     //Value - значение, по которому будет создана соотв. карта,  Arr_Players - массив игроков
     public int Sets_Roles(int Role, int Value, int[] Arr_Roles, int Ptr_AR)
@@ -192,7 +202,8 @@ public class Table {
     public void Night()
     {
         Num_Of_Days++;
-        System.out.println("Ночь");
+        //System.out.println("Ночь");
+        Cur_Time = "Ночь";
         //Ночь. Ходят только активные роли
         int Target_For_Doctor;              //цель, которую нужно будет лечить доктору
 
@@ -240,7 +251,9 @@ public class Table {
                 Target_For_Doctor = Array_For_Target_Of_Mafia[Target1];
             }
         }
+        Event_Mafia = "Мафия сделала свой выбор!";
         Num_Of_Avile_Players--;
+        //Target_Mafia = Bots[Target_For_Doctor];
 
         //если доктора не осталось в живых до выстрела, а выстрел был произведен в другую активную роль
         if (Ptr_AD == 0)
@@ -268,10 +281,13 @@ public class Table {
 
                 if (Bots[Target_For_Doctor].Get_Role() == "Policeman")
                     Ptr_AP = Refresh_Array_With_Role(Arr_Policeman, Ptr_AP);
+
+                Event_Doctor = "Доктор не спас жертву Мафии...";
             }
             else
             {
                 Num_Of_Avile_Players++;
+                Event_Doctor = "Жертва Мафии была спасена!";
                 break;
             }
         }
@@ -289,6 +305,11 @@ public class Table {
             {
                 Num_Of_Avile_Players--;
                 Ptr_AM = Refresh_Array_With_Role(Arr_Mafia, Ptr_AM);
+                Event_Policeman = "Мафия попалась на глаза Комиссару!";
+            }
+            else
+            {
+                Event_Policeman = "Комиссар не поймал Мафию!";
             }
         }
         //System.out.println(Num_Of_Avile_Players);
@@ -300,6 +321,7 @@ public class Table {
         if (Ptr_AM == 0)
         {
             System.out.println("Победа Мирных жителей!");
+            Victory = "Победа Мирных жителей!";
             //Controller.Print_Victory("Победа Мирных жителей!");
             Game_Over = true;
         }
@@ -308,14 +330,16 @@ public class Table {
         if (Num_Of_Avile_Players == Ptr_AM)
         {
             System.out.println("Победа Мафии!");
+            Victory = "Победа Мафии!";
             //Controller.Print_Victory("Победа Мафии!");
             Game_Over = true;
         }
     }
 
-    //Начало игры
+
     public void Day() {
-        System.out.println("День");
+        //System.out.println("День");
+        Cur_Time = "День";
         //День. Ходят все живые
         int[] Arr_For_Daily_Votes = new int[Num_Of_Players];          //массив для тех, кого хотят посадить
         //int Ptr_AFDV = 0;
@@ -374,9 +398,11 @@ public class Table {
                     Ptr_AP = Refresh_Array_With_Role(Arr_Policeman, Ptr_AP);
 
                 Num_Of_Avile_Players--;
+                Event_Votes = "Жители проголосовали против " + String.valueOf(Bots[Arr_Max_Votes[i]].Get_Name() + "!!!");
                 break;
             }
         }
+
 
 
         //Конец игры
@@ -386,6 +412,7 @@ public class Table {
         {
             System.out.println("Победа Мирных жителей!");
             //Controller.Print_Victory("Победа Мирных жителей!");
+            Victory = "Победа Мирных жителей!";
             Game_Over = true;
         }
 
@@ -393,40 +420,77 @@ public class Table {
         if (Num_Of_Avile_Players == Ptr_AM)
         {
             System.out.println("Победа Мафии!");
+            Victory = "Победа Мафии!";
             //Controller.Print_Victory("Победа Мафии!");
             Game_Over = true;
         }
     }
 
-    public void  Walk(int Time)
+    public int  Walk(int Time)
     {
-        if ( Game_Over == false)
-        {
-            if (Time == 0)
-            {
+        if (Game_Over == false) {
+            if (Time == 0) {
                 //ход ночью
                 Night();
-                //Time++;
-                //return Time;
+                Time++;
+                return Time;
                 //System.out.println("Ночь");
+            } else {
+                if (Time == 1) {
+                    //ход днем
+                    Day();
+                    Time--;
+                    return Time;
+
+                }
             }
 
-            if (Time == 1)
-            {
-                //ход днем
-                Day();
-                // Time--;
-                //return Time;
 
-            }
         }
 
 
-       // return  0;
+         return  0;
     }
 
     public boolean Is_Game_Over() {
         return Game_Over;
     }
+
+    public Player[] getBots() {
+        return Bots;
+    }
+
+    public int getNum_Of_Players() {
+        return Num_Of_Players;
+    }
+
+    public String getEvent_Votes() {
+        return Event_Votes;
+    }
+
+    public String getCur_Time() {
+        return Cur_Time;
+    }
+
+    public int getNum_Of_Days() {
+        return Num_Of_Days;
+    }
+
+    public String getVictory() {
+        return Victory;
+    }
+
+    public String getEvent_Mafia() {
+        return Event_Mafia;
+    }
+
+    public String getEvent_Doctor() {
+        return Event_Doctor;
+    }
+
+    public String getEvent_Policeman() {
+        return Event_Policeman;
+    }
 }
+
 
