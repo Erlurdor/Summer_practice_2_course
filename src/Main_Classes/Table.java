@@ -105,7 +105,7 @@ public class Table {
 
     //Начало игры
     public void Start_Game() {
-        Num_Of_Players = 10;
+        Num_Of_Players = 100;
 
 
         //определение количества активных ролей
@@ -267,6 +267,7 @@ public class Table {
                 else
                 {
                     Num_Of_Avile_Players++;
+                    break;
                 }
             }
             //System.out.print(Num_Of_Avile_Players + "   ");
