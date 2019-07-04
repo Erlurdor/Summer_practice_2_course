@@ -13,35 +13,12 @@ public class Card_Doctor extends Card {
         int Temp_Luck;          //Временная удача, равная базовая удача * коэфф.
         double Coef;               //коэфф. для временной удачи
         Random random = new Random();
-/*
-        Player[] Alive_Players = new Player[Bots.length];
-        int Ptr_AP = 0;
 
-        //вычисляю всех живых игроков
-        for (int i = 0; i < Num_Of_Players; i++)
-        {
-            if (Bots[i].Get_Diead() == false)
-            {
-                Alive_Players[Ptr_AP++] = Bots[i];
-            }
-        }
-
-        //раненного игрока добавляю в конец массива
-        Alive_Players[Ptr_AP++] = Bots[Target];
-
-        //перемещаю раненного игрока с последнего места в рандомное
-        int Random_Position = random.nextInt(Ptr_AP);
-        Alive_Players[Random_Position] = Alive_Players[Ptr_AP - 1];
-
-*/
         Luck = Bots[Num_Of_Players].Get_Luck();
         Coef = 0.85;
         Temp_Luck =  (int) (Luck * Coef);
 
-
         int Temp_Random_For_Luck = random.nextInt(99) + 1;       //1 - 100
-
-        //int Temp_Random_For_Target = random.nextInt(99) + 1;        //1 - 100
 
         //если удача улыбнулась игроку
         if (Temp_Random_For_Luck <= Temp_Luck)

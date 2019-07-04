@@ -1,5 +1,7 @@
 package Main_Classes;
 
+import sample.Controller;
+
 import java.io.Console;
 import java.util.Random;
 
@@ -82,7 +84,7 @@ public class Table {
     }
 
 
-    private int Refresh_Array_Witch_Role(int[] Arr, int Ptr) {
+    private int Refresh_Array_With_Role(int[] Arr, int Ptr) {
         //прохожу по всем элементам массива
         for (int i = 0; i < Ptr; i++)
         {
@@ -104,7 +106,7 @@ public class Table {
     //Начало игры
     public void Start_Game() {
         Num_Of_Players = 10;
-        //Num_All_Role = 3;
+
 
         //определение количества активных ролей
         Num_Active_Role = Num_Of_Players / 2;
@@ -129,11 +131,6 @@ public class Table {
         //вычисляется новое количество активных ролей. Это нужно из-за того, что при распределении может остатся неиспользованная(-ые) активная(-ые) роль(-и)
         Num_Active_Role = Role_Mafia + Role_Doctor + Role_Policeman;
 
-        //переменные, которые показывают. сколько ролей задействованно
-//        int Num_Of_Mafia_Roles = 0;
-//        int Num_Of_Doctor_Roles = 0;
-//        int Num_Of_Policeman_Roles = 0;
-
         Array_Of_Banned_Players = new int[Num_Of_Players];
         Ptr_Of_AOBP = 0;
 
@@ -142,40 +139,8 @@ public class Table {
             Array_Of_Banned_Players[i] = -1;
         }
 
-
-
         int Temp_Value;             //временная переменная
-//        Card_Peaceful Temp_Card_Peaceful = new Card_Peaceful();
-//        Player Test_PL = new Player();
-//        Test_PL.Init(0, "test");
 
-
-        /*
-        for (int i = 0; i < Role_Mafia; i++)
-        {
-            //В этом блоке Temp_Value служит временным хранилищем номера персонажа, которому присвоится активная роль
-
-            Card card = new Card_Mafia();
-
-            boolean Exit = false;           //переменная для того, чтобы сгенерировать нужного игрока
-
-            do
-            {
-                Temp_Value = random.nextInt(Num_Of_Players);
-
-                for (int j = 0; j < Ptr_Of_AOBP; j++)
-                {
-                    if (Temp_Value == Array_Of_Banned_Players[j])
-                    {
-                        Exit = true;
-                        break;
-                    }
-                }
-            } while (Exit);
-
-            Array_Of_Banned_Players[Ptr_Of_AOBP++] = Temp_Value;
-            Bots[Temp_Value].Set_Role(card);
-        }*/
 
         //Эти массивы содержат номера игроков с активной ролью
         int[] Arr_Mafia = new int[Role_Mafia];
@@ -225,10 +190,23 @@ public class Table {
             {
                 Array_For_Target_Of_Mafia[Ptr_AFTOM++] = Bots[Arr_Mafia[j]].Walk_At_Night(Bots, Num_Of_Players, Arr_Mafia[j]);
 
+//                int Test = Bots[Arr_Mafia[j]].Walk_At_Night(Bots, Num_Of_Players, Arr_Mafia[j]);
+//                if (Test == -1)
+//                {
+//                    System.out.println("ERROR!!!!!");
+//                    Controller.Print_Victory("Error");
+//                }
+//                else
+//                {
+//                    Array_For_Target_Of_Mafia[Ptr_AFTOM++] = Test;
+//                }
+//
+//
                 //Player[] Bots, int Num_Of_Players, int[] Target
                 //где Player[]] Bots - массив все игроков, Target - цель ()
 
             }
+
 
             //совершение выстрела. Финальный выбор цели
             int Target1 = random.nextInt(Ptr_AFTOM);
@@ -253,13 +231,22 @@ public class Table {
                     //у обоих персонажей показатель удачи раный. Умирает случайно один из них
 
                     //если осталось больше 1 Мафии
-                   Target1 = random.nextInt(Array_For_Target_Of_Mafia.length);
+                    Target1 = random.nextInt(Array_For_Target_Of_Mafia.length);
 
                     Bots[Array_For_Target_Of_Mafia[Target1]].Set_Died(true);
                     Target_For_Doctor = Array_For_Target_Of_Mafia[Target1];
                 }
             }
             Num_Of_Avile_Players--;
+
+            //если доктора не осталось в живых до выстрела, а выстрел был произведен в другую активную роль
+            if (Ptr_AD == 0)
+            {
+                if (Bots[Target_For_Doctor].Get_Role() == "Policeman")
+                    Ptr_AP = Refresh_Array_With_Role(Arr_Policeman, Ptr_AP);
+            }
+
+
             //System.out.print(Num_Of_Avile_Players - 1 + "   ");
 
 
@@ -272,10 +259,10 @@ public class Table {
                 if (Save == 0)
                 {
                     if (Bots[Target_For_Doctor].Get_Role() == "Doctor")
-                        Ptr_AD = Refresh_Array_Witch_Role(Arr_Doctor, Ptr_AD);
+                        Ptr_AD = Refresh_Array_With_Role(Arr_Doctor, Ptr_AD);
 
                     if (Bots[Target_For_Doctor].Get_Role() == "Policeman")
-                        Ptr_AP = Refresh_Array_Witch_Role(Arr_Policeman, Ptr_AP);
+                        Ptr_AP = Refresh_Array_With_Role(Arr_Policeman, Ptr_AP);
                 }
                 else
                 {
@@ -295,10 +282,31 @@ public class Table {
                 if (Arrest == 1)
                 {
                     Num_Of_Avile_Players--;
-                    Ptr_AM = Refresh_Array_Witch_Role(Arr_Mafia, Ptr_AM);
+                    Ptr_AM = Refresh_Array_With_Role(Arr_Mafia, Ptr_AM);
                 }
             }
             //System.out.println(Num_Of_Avile_Players);
+
+
+            //Конец игры
+
+            //Мафии больше не осталось
+            if (Ptr_AM == 0)
+            {
+                System.out.println("Победа Мирных жителей!");
+                Controller.Print_Victory("Победа Мирных жителей!");
+                Game_Over = true;
+                break;
+            }
+
+            //Количество Мафии равно количеству оставшихся в живых игроков
+            if (Num_Of_Avile_Players == Ptr_AM)
+            {
+                System.out.println("Победа Мафии!");
+                Controller.Print_Victory("Победа Мафии!");
+                Game_Over = true;
+                break;
+            }
 
 
             //День. Ходят все живые
@@ -350,13 +358,13 @@ public class Table {
                     Bots[Arr_Max_Votes[i]].Set_Died(true);
 
                     if (Bots[Arr_Max_Votes[i]].Get_Role() == "Mafia")
-                        Ptr_AM = Refresh_Array_Witch_Role(Arr_Mafia, Ptr_AM);
+                        Ptr_AM = Refresh_Array_With_Role(Arr_Mafia, Ptr_AM);
 
                     if (Bots[Arr_Max_Votes[i]].Get_Role() == "Doctor")
-                        Ptr_AD = Refresh_Array_Witch_Role(Arr_Doctor, Ptr_AD);
+                        Ptr_AD = Refresh_Array_With_Role(Arr_Doctor, Ptr_AD);
 
                     if (Bots[Arr_Max_Votes[i]].Get_Role() == "Policeman")
-                        Ptr_AP = Refresh_Array_Witch_Role(Arr_Policeman, Ptr_AP);
+                        Ptr_AP = Refresh_Array_With_Role(Arr_Policeman, Ptr_AP);
 
                     Num_Of_Avile_Players--;
                     break;
@@ -370,6 +378,7 @@ public class Table {
             if (Ptr_AM == 0)
             {
                 System.out.println("Победа Мирных жителей!");
+                Controller.Print_Victory("Победа Мирных жителей!");
                 Game_Over = true;
             }
 
@@ -377,37 +386,12 @@ public class Table {
             if (Num_Of_Avile_Players == Ptr_AM)
             {
                 System.out.println("Победа Мафии!");
+                Controller.Print_Victory("Победа Мафии!");
                 Game_Over = true;
             }
-
-
-            /*
-            if (Num_Of_Days == 10)
-            {
-                Game_Over = true;
-            }
-            */
-
         }
 
-
-
-/*
-       for (int i = 0; i < Num_Of_Players; i++)
-       {
-           System.out.println(String.valueOf(Bots[i].Get_Role()));
-       }
-*/
-//        for (int i = 0; i < Num_Active_Role; i++)
-//        {
-//            int Role_Number;           //временная переменная. Служит для определения номера активной роли
-//            Role_Number = random.nextInt(Num_All_Role);
-
-
-
-
+        int kk = 0;
 
     }
-
-
 }

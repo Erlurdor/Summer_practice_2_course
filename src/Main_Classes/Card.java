@@ -14,6 +14,22 @@ public class Card {
         }
 
         //персонаж ЖИВ
+        int[] Alive_Players = new int[Bots.length];        //массив с индексами игроков
+        int Ptr_AP = 0;
+
+
+        //вычисляю всех живых игроков
+        for (int i = 0; i < Bots.length; i++)
+        {
+            //если игрок жив
+            if (Bots[i].Get_Diead() == false)
+            {
+                Alive_Players[Ptr_AP++] = i;
+                //Num_Alive_Players++;
+            }
+        }
+
+        //персонаж ЖИВ
         Random random = new Random();
         int Temp_Target;
         boolean Exit;
@@ -22,12 +38,14 @@ public class Card {
         do
         {
             Exit = false;
-            Temp_Target = random.nextInt(Bots.length);
+            Temp_Target = random.nextInt(Ptr_AP);
 
             //если он выбрал НЕ себя и НЕ мертвого персонажа
-            if (Temp_Target != Target && Bots[Temp_Target].Get_Diead() != true)
+
+            if (Alive_Players[Temp_Target] != Target && Bots[Alive_Players[Temp_Target]].Get_Diead() != true)
+            //if (Temp_Target != Target && Bots[Temp_Target].Get_Diead() != true)
             {
-                return Temp_Target;
+                return Alive_Players[Temp_Target];
             }
 
         } while (!Exit);
